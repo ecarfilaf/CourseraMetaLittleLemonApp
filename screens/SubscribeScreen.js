@@ -26,8 +26,9 @@ const SubscribeScreen = () => {
 				style={styles.inputBox}
 				value={email}
 				onChangeText={onChangeEmail}
-				placeholder={"email"}
-				keyboardType={"email-address"}
+        keyboardType="email-address"
+        textContentType="emailAddress"
+        placeholder={"Type your email"}
 			/>
 			<Button
 				onPress={() => {

@@ -1,145 +1,124 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { Text, View, StyleSheet, SectionList, SafeAreaView, StatusBar, Alert } from 'react-native';
-import { Searchbar } from 'react-native-paper';
-import debounce from 'lodash.debounce';
-import { createTable, getMenuItems, saveMenuItems, filterByQueryAndCategories } from './database';
-import Filters from './components/Filters';
-import { getSectionListData, useUpdateEffect } from './utils';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect, useMemo, useReducer, useState } from 'react';
+import { StyleSheet, SafeAreaView, StatusBar, Alert } from 'react-native';
+import Onboarding from './screens/Onboarding.js';
+import Profile from './screens/Profile.js';
+import SplashScreen from './screens/SplashScreen.js';
+import WelcomeScreen from './screens/WelcomeScreen.js';
+import Home from './screens/Home.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu-items-by-category.json';
-const sections = ['Appetizers', 'Salads', 'Beverages'];
+import { AuthContext } from "./contexts/AuthContext";
 
-const Item = ({ title, price }) => (
-	<View style={styles.item}>
-		<Text style={styles.title}>{title}</Text>
-		<Text style={styles.title}>${price}</Text>
-	</View>
-);
+const Stack = createNativeStackNavigator();
 
-export default function App() {
-	const [data, setData] = useState([]);
-	const [searchBarText, setSearchBarText] = useState('');
-	const [query, setQuery] = useState('');
-	const [filterSelections, setFilterSelections] = useState(
-		sections.map(() => false)
-	);
+export default function App({ navigation }) {
 
-	const fetchData = async () => {
-		// 1. Implement this function
-		// Fetch the menu from the API_URL endpoint. You can visit the API_URL in your browser to inspect the data returned
-		// The category field comes as an object with a property called "title". You just need to get the title value and set it under the key "category".
-		// So the server response should be slighly transformed in this function (hint: map function) to flatten out each menu item in the array,
-		try {
-			console.log('Api URL: ' + API_URL);
-			const response = await fetch(API_URL);
-			const json = await response.json();
-			return (json.menu);
-		} catch (error) {
-			console.error(error);
-		} finally {
-			console.log('finally fetchData');
+	const [state, dispatch] = useReducer(
+		(prevState, action) => {
+			switch (action.type) {
+				case "onboard":
+					console.log('App.js useReducer onboard');
+					return {
+						...prevState,
+						isLoading: false,
+						isOnboardingCompleted: action.isOnboardingCompleted,
+					};
+			}
+		},
+		{
+			isLoading: true,
+			isOnboardingCompleted: false,
 		}
-		return [];
-	}
+	);
 
 	useEffect(() => {
 		(async () => {
-			console.log('useEffect');
+			let profileData = [];
 			try {
-				await createTable();
-				let menuItems = await getMenuItems();
-
-				// The application only fetches the menu data once from a remote URL
-				// and then stores it into a SQLite database.
-				// After that, every application restart loads the menu from the database
-				if (!menuItems.length) {
-					const menuItems = await fetchData();
-					console.log('useEffect-menuItems');
-					saveMenuItems(menuItems);
+				const getProfile = await AsyncStorage.getItem("profile");
+				if (getProfile !== null) {
+					profileData = getProfile;
 				}
-				const sectionListData = getSectionListData(menuItems);
-				console.log('useEffect-sectionListData');
-				setData(sectionListData);
 			} catch (e) {
-				// Handle error
-				Alert.alert(e.message);
+				console.error('App.js useEffect ' + e.message);
 			} finally {
-				console.log('finally useEffect');
-			}
-		})();
-	}, []);
-
-	useUpdateEffect(() => {
-		console.log('useUpdateEffect');
-		(async () => {
-			const activeCategories = sections.filter((s, i) => {
-				// If all filters are deselected, all categories are active
-				if (filterSelections.every((item) => item === false)) {
-					return true;
+				if (Object.keys(profileData).length != 0) {
+					dispatch({ type: "onboard", isOnboardingCompleted: true });
+				} else {
+					dispatch({ type: "onboard", isOnboardingCompleted: false });
 				}
-				return filterSelections[i];
-			});
-			try {
-				const menuItems = await filterByQueryAndCategories(
-					query,
-					activeCategories
-				);
-				console.log('useUpdateEffect-menuItems');
-				console.log(menuItems);
-				const sectionListData = getSectionListData(menuItems);
-				setData(sectionListData);
-			} catch (e) {
-				Alert.alert(e.message);
 			}
 		})();
-	}, [filterSelections, query]);
-
-	const lookup = useCallback((q) => {
-		setQuery(q);
 	}, []);
 
-	const debouncedLookup = useMemo(() => debounce(lookup, 500), [lookup]);
+	const authContext = useMemo(
+		() => ({
+			onboard: async (data) => {
+				console.log('App.js authContext = useMemo onboard');
+				try {
+					const jsonValue = JSON.stringify(data);
+					await AsyncStorage.setItem("profile", jsonValue);
+				} catch (e) {
+					console.error('Error: App.js authContext = useMemo onboard');
+				}
 
-	const handleSearchChange = (text) => {
-		setSearchBarText(text);
-		debouncedLookup(text);
-	};
+				dispatch({ type: "onboard", isOnboardingCompleted: true });
+			},
+			update: async (data) => {
+				console.log('App.js authContext = useMemo update');
+				try {
+					const jsonValue = JSON.stringify(data);
+					await AsyncStorage.setItem("profile", jsonValue);
+				} catch (e) {
+					console.error('Error: App.js authContext = useMemo update');
+				}
 
-	const handleFiltersChange = async (index) => {
-		const arrayCopy = [...filterSelections];
-		arrayCopy[index] = !filterSelections[index];
-		setFilterSelections(arrayCopy);
-	};
+				Alert.alert("Success", "Successfully saved changes!");
+				navigation.navigate('Home');
+			},
+			logout: async () => {
+				try {
+					await AsyncStorage.clear();
+				} catch (e) {
+					console.error('Error: App.js authContext = useMemo logout');
+				}
+
+				dispatch({ type: "onboard", isOnboardingCompleted: false });
+			},
+		}),
+		[]
+	);
+
+	if (state.isLoading) {
+		return <SplashScreen />;
+	}
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<Searchbar
-				placeholder="Search"
-				placeholderTextColor="white"
-				onChangeText={handleSearchChange}
-				value={searchBarText}
-				style={styles.searchBar}
-				iconColor="white"
-				inputStyle={{ color: 'white' }}
-				elevation={0}
-			/>
-			<Filters
-				selections={filterSelections}
-				onChange={handleFiltersChange}
-				sections={sections}
-			/>
-			<SectionList
-				style={styles.sectionList}
-				sections={data}
-				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => (
-					<Item title={item.title} price={item.price} />
-				)}
-				renderSectionHeader={({ section: { title } }) => (
-					<Text style={styles.header}>{title}</Text>
-				)}
-			/>
-		</SafeAreaView>
+		<AuthContext.Provider value={authContext}>
+			<NavigationContainer>
+				<Stack.Navigator>
+					{state.isOnboardingCompleted ? (
+						<>
+							<Stack.Screen
+								name="Home"
+								component={Home}
+								options={{ headerShown: false }}
+							/>
+							<Stack.Screen name="Profile" component={Profile}
+								options={{ headerShown: false }} />
+						</>
+					) : (
+						<Stack.Screen
+							name="Onboarding"
+							component={Onboarding}
+							options={{ headerShown: false }}
+						/>
+					)}
+				</Stack.Navigator>
+			</NavigationContainer>
+		</AuthContext.Provider>
 	);
 }
 
