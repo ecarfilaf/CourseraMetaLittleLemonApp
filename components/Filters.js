@@ -1,8 +1,8 @@
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, ScrollView } from 'react-native';
 
 const Filters = ({ onChange, selections, sections }) => {
 	return (
-		<View style={styles.filtersContainer}>
+		<ScrollView style={styles.filtersContainer} horizontal={true}>
 			{sections.map((section, index) => (
 				<TouchableOpacity
 					key={index}
@@ -13,29 +13,45 @@ const Filters = ({ onChange, selections, sections }) => {
 						flex: 1 / sections.length,
 						justifyContent: 'center',
 						alignItems: 'center',
-						padding: 16,
-						backgroundColor: selections[index] ? '#EE9972' : '#495E57',
+						padding: 15,
+						margin: 10,
+						backgroundColor: selections[index] ? '#495E57' : '#EDEFEE',
 						borderWidth: 1,
-						borderColor: 'white',
+						borderColor: '#FBDABB',
+						borderRadius: 25,
+						shadowColor: "#333333",
+						shadowOffset: {
+							width: 6,
+							height: 6,
+						},
+						shadowOpacity: 0.5,
+						shadowRadius: 4,
+						elevation: 8,
 					}}>
 					<View>
-						<Text style={{ color: selections[index] ? 'black' : 'white' }}>
+						<Text style={[styles.text, { color: selections[index] ? '#EDEFEE' : '#495E57' }]}>
 							{section}
 						</Text>
 					</View>
 				</TouchableOpacity>
 			))}
-		</View>
+		</ScrollView>
 	);
 };
 
 const styles = StyleSheet.create({
 	filtersContainer: {
-		backgroundColor: 'green',
+		backgroundColor: '#EDEFEE',
 		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 16,
+		marginBottom: 15,
+		marginTop: 15,
 	},
+	text:{
+		fontSize: 16,
+		fontFamily: "Karla-Bold",
+		//fontWeight: 800,
+		textTransform: 'capitalize',
+	}
 });
 
 export default Filters;

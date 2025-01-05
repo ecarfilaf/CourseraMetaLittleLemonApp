@@ -39,7 +39,7 @@ const Profile = ({ navigation }) => {
 		(async () => {
 			try {
 				const getProfile = await AsyncStorage.getItem("profile");
-				console.log(getProfile);
+				//console.log(getProfile);
 				setProfile(JSON.parse(getProfile));
 				setDiscard(false);
 			} catch (e) {

@@ -12,14 +12,16 @@ const NavBar = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.menu}>
+				{ routes[index].name != 'Home' &&
 				<Pressable onPress={() => {
-					if (routes[index].name == 'Profile'){
+					if (routes[index].name != 'Home'){
 						navigation.navigate('Home');
 					}
 				}}>
 					<Image
 						style={styles.menuimg} source={require("./../assets/img/Button_Arrow.png")} />
 				</Pressable>
+				}
 			</View>
 			<View style={styles.image}>
 				<Image
@@ -53,10 +55,10 @@ const styles = StyleSheet.create({
 	menu: {
 		margin: 20,
 		textAlign: "center",
-	},
-	menuimg: {
 		width: 40,
 		height: 40,
+	},
+	menuimg: {
 		textAlign: "center",
 		borderRadius: 10,
 	},

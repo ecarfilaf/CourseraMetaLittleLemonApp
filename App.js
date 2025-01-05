@@ -1,12 +1,13 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect, useMemo, useReducer, useState } from 'react';
-import { StyleSheet, SafeAreaView, StatusBar, Alert } from 'react-native';
+import { useEffect, useMemo, useReducer } from 'react';
+import { StyleSheet, Alert } from 'react-native';
 import Onboarding from './screens/Onboarding.js';
 import Profile from './screens/Profile.js';
 import SplashScreen from './screens/SplashScreen.js';
-import WelcomeScreen from './screens/WelcomeScreen.js';
 import Home from './screens/Home.js';
+import { StatusBar } from "expo-status-bar";
+import DetailDish from './screens/DetailDish.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { AuthContext } from "./contexts/AuthContext";
@@ -19,7 +20,7 @@ export default function App({ navigation }) {
 		(prevState, action) => {
 			switch (action.type) {
 				case "onboard":
-					console.log('App.js useReducer onboard');
+					//console.log('App.js useReducer onboard');
 					return {
 						...prevState,
 						isLoading: false,
@@ -96,29 +97,31 @@ export default function App({ navigation }) {
 	}
 
 	return (
-		<AuthContext.Provider value={authContext}>
-			<NavigationContainer>
-				<Stack.Navigator>
-					{state.isOnboardingCompleted ? (
-						<>
-							<Stack.Screen
-								name="Home"
-								component={Home}
-								options={{ headerShown: false }}
-							/>
-							<Stack.Screen name="Profile" component={Profile}
-								options={{ headerShown: false }} />
-						</>
-					) : (
+    <AuthContext.Provider value={authContext}>
+		<NavigationContainer>
+			<Stack.Navigator>
+				{state.isOnboardingCompleted ? (
+					<>
 						<Stack.Screen
-							name="Onboarding"
-							component={Onboarding}
+							name="Home"
+							component={Home}
 							options={{ headerShown: false }}
 						/>
-					)}
-				</Stack.Navigator>
-			</NavigationContainer>
-		</AuthContext.Provider>
+						<Stack.Screen name="Profile" component={Profile}
+							options={{ headerShown: false }} />
+						<Stack.Screen name="DetailDish" component={DetailDish}
+							options={{ headerShown: false }} />
+					</>
+				) : (
+					<Stack.Screen
+						name="Onboarding"
+						component={Onboarding}
+						options={{ headerShown: false }}
+					/>
+				)}
+			</Stack.Navigator>
+		</NavigationContainer>
+    </AuthContext.Provider>
 	);
 }
 
