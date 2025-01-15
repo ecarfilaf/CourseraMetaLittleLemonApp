@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
 		marginVertical: 5,
 		borderColor: "EDEFEE",
 		borderWidth: 1,
+		padding: 10,
 	},
 	inputMail: {
 		height: 40,
@@ -308,6 +309,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		backgroundColor: "#EDEFEE",
 		marginVertical: 5,
+		padding: 10,
 	},
 	checkbox: {
 		backgroundColor: "#EDEFEE",

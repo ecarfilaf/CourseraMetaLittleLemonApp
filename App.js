@@ -11,6 +11,7 @@ import DetailDish from './screens/DetailDish.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { AuthContext } from "./contexts/AuthContext";
+import PreOrder from './screens/PreOrder.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -110,6 +111,8 @@ export default function App({ navigation }) {
 						<Stack.Screen name="Profile" component={Profile}
 							options={{ headerShown: false }} />
 						<Stack.Screen name="DetailDish" component={DetailDish}
+							options={{ headerShown: false }} />
+						<Stack.Screen name="PreOrder" component={PreOrder}
 							options={{ headerShown: false }} />
 					</>
 				) : (

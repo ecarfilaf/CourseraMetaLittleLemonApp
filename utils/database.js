@@ -21,7 +21,7 @@ export async function createTable() {
 				}
 			);
 		});
-		console.log('BD created');
+		// console.log('BD created');
 	} catch (ex) {
 		console.log('Error creating DB: ' + ex);
 	}

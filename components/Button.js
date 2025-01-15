@@ -1,15 +1,38 @@
+import { useFonts } from "expo-font";
 import * as React from "react";
-import { Pressable, Text, StyleSheet } from "react-native";
+import { Pressable, Text, StyleSheet, View } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 
 const Button = ({ onPress, children, disabled, alter, remove }) => {
+	// FONTS
+	const [fontsLoaded] = useFonts({
+		"Karla-Regular": require("../assets/fonts/Karla-Regular.ttf"),
+		"Karla-Medium": require("../assets/fonts/Karla-Medium.ttf"),
+		"Karla-Bold": require("../assets/fonts/Karla-Bold.ttf"),
+		"Karla-ExtraBold": require("../assets/fonts/Karla-ExtraBold.ttf"),
+		"MarkaziText-Regular": require("../assets/fonts/MarkaziText-Regular.ttf"),
+		"MarkaziText-Medium": require("../assets/fonts/MarkaziText-Medium.ttf"),
+	});
+
+	const onLayoutRootView = React.useCallback(async () => {
+		if (fontsLoaded) {
+			await SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded]);
+
+	if (!fontsLoaded) {
+		return null;
+	}
+
 	return (
+		<View onLayout={onLayoutRootView}>
 		<Pressable
 			onPress={onPress}
 			style={[styles.buttonDefault, disabled && styles.disabled, alter && styles.buttonAlter, remove && styles.buttonRemove]}
 			disabled={disabled}
 		>
 			<Text style={[styles.text, alter && styles.textAlter]}>{children}</Text>
-		</Pressable>
+		</Pressable></View>
 	);
 };
 
@@ -61,6 +84,7 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 18,
 		color: '#495E57',
+		fontFamily: "Karla-Bold",
 	},
 	textAlter: {
 		fontSize: 18,

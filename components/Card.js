@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { setDish } from '../utils/orders';
 
 const Card = ({ navigation, name, price, description, image }) => {
 	const imgDef = "./../assets/little-lemon-logo-grey.png";
@@ -10,12 +11,8 @@ const Card = ({ navigation, name, price, description, image }) => {
 	const imgPath5 = "./../assets/img/lemonDessert.jpg";
 
 	const onPressFunction = () => {
-		navigation.navigate('DetailDish', {
-			name: name,
-			price: price,
-			description: description,
-			image: image,
-		});
+		setDish({ name, price, description, image, avocado: 0, seeds: 0, dressing: 0, numdishes: 0, ammount: 0.00});
+		navigation.navigate('DetailDish');
 	};
 
 	return (
