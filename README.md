@@ -45,8 +45,9 @@ When clicking the Logout button, user will redirect back to login page, clearing
 
 ### Links
 
+- Figma: [Desing](https://www.figma.com/design/ydj6Z2e8veTZE9uCdDuF3e/Coursera-Little-Lemon-App?node-id=141-23&p=f&t=wmTlevTGMEbWZPcK-0)
 - Github: [Code](https://github.com/ecarfilaf/CourseraMetaLittleLemonApp)
-- Demo : Scan the [QR Code](https://expo.dev/preview/update?message=Publish%20Update&updateRuntimeVersion=exposdk%3A47.0.0&createdAt=2024-07-03T09%3A21%3A32.588Z&slug=exp&projectId=221d2bc0-e34d-4538-b828-2e1cabe5bba7&group=2468e4a0-6270-4a2e-8e34-17167031fde8) to see the demo.
+- Demo : Scan the [QR Code](https://expo.dev/accounts/ecarfidev/projects/CourseraMetaLittleLemonApp/builds/5f20a9b9-9359-4628-a4a4-22f8081a2541) to see the demo.
 
 ## My process
 
